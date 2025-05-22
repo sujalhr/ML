@@ -1,0 +1,47 @@
+import pandas as pd
+import seaborn as sns
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import StandardScaler
+import warnings
+
+warnings.filterwarnings("ignore")
+
+data = sns.load_dataset("tips")
+
+data.isnull().sum()
+data.duplicated().sum()
+
+df = data.drop_duplicates()
+df.duplicated().sum()
+
+df.describe().T
+df.describe(exclude=['int', 'float']).T
+
+X = data["total_bill"].values.reshape(-1, 1)
+y = data["tip"].values
+
+scaler = StandardScaler()
+X = scaler.fit_transform(X)
+
+def lwr(X_train, y_train, X_test, tau):
+    y_pred = np.zeros(len(X_test))
+    for i, x in enumerate(X_test):
+        weights = np.exp(-np.sum((X_train - x) ** 2, axis=1) / (2 * tau ** 2))
+        W = np.diag(weights)
+        X_b = np.c_[np.ones_like(X_train), X_train]
+        theta = np.linalg.pinv(X_b.T @ W @ X_b) @ (X_b.T @ W @ y_train)
+        y_pred[i] = np.r_[1, x] @ theta
+    return y_pred
+
+tau = 0.5
+X_test = np.linspace(X.min(), X.max(), 100).reshape(-1, 1)
+y_pred = lwr(X, y, X_test, tau)
+
+plt.scatter(X, y, color="blue", alpha=0.6)
+plt.plot(X_test, y_pred, color="red", linewidth=2)
+plt.xlabel("Total Bill (Standardized)")
+plt.ylabel("Tip")
+plt.title("Locally Weighted Regression on Tips Dataset")
+plt.legend(["LWR Fit", "Data points"])
+plt.show()
