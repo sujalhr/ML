@@ -6,7 +6,11 @@ import seaborn as sns
 import warnings
 warnings.filterwarnings('ignore')
 
-df = pd.read_csv('/content/housing.csv')
+from sklearn.datasets import fetch_california_housing
+data = fetch_california_housing(as_frame=True)
+df = data.frame
+
+#df = pd.read_csv('/content/housing.csv')
 
 df.head()
 
@@ -19,6 +23,12 @@ df.nunique()
 df.isnull().sum()
 
 df.duplicated().sum()
+
+#min= data.data['AveRooms'].min()
+#max= data.data['AveRooms'].max()
+
+#print(f"{min}")
+#print(f"-max-{max}")
 
 df['total_bedrooms'].median()
 
