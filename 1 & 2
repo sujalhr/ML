@@ -1,16 +1,11 @@
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 import seaborn as sns
-
-import warnings
-warnings.filterwarnings('ignore')
-
+import matplotlib.pyplot as plt
 from sklearn.datasets import fetch_california_housing
+
 data = fetch_california_housing(as_frame=True)
 df = data.frame
-
-#df = pd.read_csv('/content/housing.csv')
 
 df.head()
 
@@ -24,15 +19,11 @@ df.isnull().sum()
 
 df.duplicated().sum()
 
-#min= data.data['AveRooms'].min()
-#max= data.data['AveRooms'].max()
+min= data.data['AveRooms'].min()
+max= data.data['AveRooms'].max()
 
-#print(f"{min}")
-#print(f"-max-{max}")
-
-df['total_bedrooms'].median()
-
-df['total_bedrooms'].fillna(df['total_bedrooms'].median(), inplace=True)
+print(f"{min}")
+print(f"-max-{max}")
 
 for i in df.iloc[:, 2:7]:
     df[i] = df[i].astype('int')
@@ -41,28 +32,27 @@ df.head()
 
 df.describe().T
 
-Numerical = df.select_dtypes(include=[np.number]).columns
-print(Numerical)
+numerical = df.select_dtypes(include=[np.number]).columns
 
-for col in Numerical:
+for col in numerical:
     plt.figure(figsize=(10, 6))
     df[col].plot(kind='hist', title=col, bins=60, edgecolor='black')
     plt.ylabel('Frequency')
     plt.show()
 
-for col in Numerical:
+for col in numerical:
     plt.figure(figsize=(6, 6))
     sns.boxplot(df[col], color='blue')
     plt.title(col)
     plt.ylabel(col)
     plt.show()
 
-correlation_matrix = df.drop(columns=["ocean_proximity"]).corr()
+correlation_matrix = df.corr()
 
 plt.figure(figsize=(10, 8))
 sns.heatmap(correlation_matrix, annot=True, cmap="coolwarm", fmt=".2f", linewidths=0.5)
 plt.title("Correlation Matrix Heatmap")
 plt.show()
 
-sns.pairplot(df.drop(columns=["ocean_proximity"]))
+sns.pairplot(df)
 plt.show()
