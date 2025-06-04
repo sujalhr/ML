@@ -20,10 +20,13 @@ pca_df["Target"] = target
 
 plt.figure(figsize=(8, 6))
 
-for label, color in zip(iris.target_names, ["red", "green", "blue"]):
+colors = ["red", "green", "blue"]
+
+for i, label in enumerate(iris.target_names):
     plt.scatter(
-        pca_df.loc[pca_df["Target"] == list(iris.target_names).index(label), "Principal Component 1"],
-        pca_df.loc[pca_df["Target"] == list(iris.target_names).index(label), "Principal Component 2"],
+        features_pca[target == i, 0],  
+        features_pca[target == i, 1],  
+        c=colors[i],
         label=label,
         alpha=0.7
     )
